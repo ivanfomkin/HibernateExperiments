@@ -14,15 +14,21 @@ public class Main {
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
         Session session = sessionFactory.openSession();
 
+        Subscription subscription = session.get(Subscription.class, new SubscriptionPK(1,2));
+        System.out.println("Дата подписки студента " +
+                session.get(Student.class, 2) +
+                " на курс " +
+                session.get(Course.class, 1) + ": ");
+        System.out.println(subscription.getSubscriptionDate());
 
-        for (int i = 1; i < 11; i++){
-            Course course = session.get(Course.class, i);
-            System.out.println("Course name is " + course.getName());
-            int teacherId = course.getTeacherId();
-            Teacher teacher = session.get(Teacher.class, teacherId);
-            System.out.println("Teacher of the course " + course.getName() + " is " + teacher.getName());
-        }
+        Student student = session.get(Student.class, 6);
+        System.out.println("\nСписок курсов студента " + student.getName() + ": ");
+        student.getCourses().forEach(System.out::println);
 
-        sessionFactory.close();
+        Course course = session.get(Course.class, 10);
+        System.out.println("\nСписок студентов курса " + course.getName() + ": ");
+        course.getStudents().forEach(System.out::println);
+
+        session.close();
     }
 }

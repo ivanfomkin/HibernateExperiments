@@ -5,7 +5,7 @@
     <session-factory>
         <!-- JDBC Database connection settings -->
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/skillbox?useSSL=FALSE&amp;serverTimezone=UTC</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/skillbox?useSSL=FALSE</property>
         <property name="connection.username">root</property>
         <property name="connection.password">testtest</property>
         <!-- JDBC connection pool settings ... using built-in test pool -->
@@ -13,7 +13,7 @@
         <!-- Select our SQL dialect -->
         <property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
         <!-- Echo the SQL to stdout -->
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
         <!-- Set the current session context -->
         <property name="current_session_context_class">thread</property>
         <!-- Drop and re-create the database schema on startup -->
@@ -21,5 +21,7 @@
 
         <mapping class="Course"></mapping>
         <mapping class="Teacher"></mapping>
+        <mapping class="Student"></mapping>
+        <mapping class="Subscription"></mapping>
     </session-factory>
 </hibernate-configuration>

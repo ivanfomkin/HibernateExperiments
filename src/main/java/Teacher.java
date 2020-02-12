@@ -1,17 +1,21 @@
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Teachers")
+@Table(name = "teachers")
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
-    private String name;
-    private int salary;
-    private int age;
 
-    public Teacher() {
-    }
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "salary")
+    private int salary;
+
+    @Column(name = "age")
+    private int age;
 
     public int getId() {
         return id;
