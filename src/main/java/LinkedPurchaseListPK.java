@@ -3,6 +3,7 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+//Класс составного ключа
 @Embeddable
 public class LinkedPurchaseListPK implements Serializable {
     @Column(name = "student_id", nullable = false)

@@ -17,32 +17,7 @@ public class Main {
     public static void main(String[] args) {
         //set global time_zone = '-3:00'; - пропишем это в mysql-консоли, чтобы не ругался на TimeZone
 
-        //Сначала подключимся к базе через JDBC
-        String url = "jdbc:mysql://localhost:3306/skillbox";
-        String user = "root";
-        String pass = "testtest";
-
-        String query = "select student_name, course_name from purchaselist";
-
-        //Будем хранить имена из purchaseList
-        List<String> studentsNamesList = new ArrayList<>();
-        List<String> coursesNamesList = new ArrayList<>();
-
-        try {
-            Connection connection = DriverManager.getConnection(url, user, pass);
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-            while (resultSet.next()) {
-                String courseName = resultSet.getString("course_name");
-                String studentName = resultSet.getString("student_name");
-                studentsNamesList.add(studentName);
-                coursesNamesList.add(courseName);
-            }
-            statement.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
+        //Подключаемся к БД через Hibernate и создаём сессию
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .configure("hibernate.cfg.xml")
                 .build();
@@ -50,6 +25,14 @@ public class Main {
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
         Session session = sessionFactory.openSession();
         session.beginTransaction();
+
+        //Будем хранить имена из purchaseList
+        List<String> studentsNamesList;
+        List<String> coursesNamesList;
+
+        //Заполним листы имён SQL-запросом
+        studentsNamesList = session.createSQLQuery("select student_name from purchaselist").list();
+        coursesNamesList = session.createSQLQuery("select course_name from purchaselist").list();
 
         //Пробежимся по именам курсов и студентов и заполним LinkedPurchaseList
         for (int i = 0; i < coursesNamesList.size(); i++) {
@@ -81,8 +64,6 @@ public class Main {
             //Записываем в новую таблицу ключ
             LinkedPurchaseListPK key = new LinkedPurchaseListPK(studentId, courseId);
             LinkedPurchaseList linkedPurchaseList = new LinkedPurchaseList(key);
-            session.save(linkedPurchaseList);
-
             session.save(linkedPurchaseList);
         }
 
