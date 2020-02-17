@@ -6,10 +6,6 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,21 +23,26 @@ public class Main {
         session.beginTransaction();
 
         //Будем хранить имена из purchaseList
-        List<String> studentsNamesList;
-        List<String> coursesNamesList;
+        List<String> studentsNamesList = new ArrayList<>();
+        List<String> coursesNamesList = new ArrayList<>();
 
         //Заполним листы имён SQL-запросом
-        studentsNamesList = session.createSQLQuery("select student_name from purchaselist").list();
-        coursesNamesList = session.createSQLQuery("select course_name from purchaselist").list();
+        List<Object[]> request = session.createSQLQuery("select student_name, course_name from purchaselist")
+                .list();
+        for (Object[] rows: request) {
+            studentsNamesList.add(rows[0].toString());
+            coursesNamesList.add(rows[1].toString());
+        }
 
         //Пробежимся по именам курсов и студентов и заполним LinkedPurchaseList
         for (int i = 0; i < coursesNamesList.size(); i++) {
 
             //Имя текущего студента
-            String currentStudenName = studentsNamesList.get(i);
+            String currentStudentName = studentsNamesList.get(i);
 
             //Имя текущего курса
             String currentCourseName = coursesNamesList.get(i);
+
 
             //Запрос на получение текущего курса
             Query courseQuery = session.createQuery("From " + Course.class.getSimpleName() +
@@ -51,7 +52,7 @@ public class Main {
             //Запрос на получение текущего студента
             Query studentQuery = session.createQuery("From " + Student.class.getSimpleName() +
                     " where name = ?1");
-            studentQuery.setParameter(1, currentStudenName);
+            studentQuery.setParameter(1, currentStudentName);
 
             //Получаем студента и его ID
             Student student = (Student) studentQuery.uniqueResult();
